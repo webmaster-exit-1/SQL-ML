@@ -18,7 +18,11 @@ SQL-ML is a high-performance detection engine that uses Machine Learning to clas
    pip install flask redis requests scikit-learn
 
 2. Installation
-Clone the repository and ensure your trained model file is in the root directory.
+Clone the repository:
+```bash
+git clone https://github.com/webmaster-exit-1/SQL-ML.git
+cd SQL-ML
+```
 
 3. Generate Training Data and Train Model
 Before running the pipeline, you must generate the training data and train the ML model:
@@ -39,8 +43,10 @@ This creates the model files (`sql_model.pkl` and `vectorizer.pkl`) that the wor
 
 4. Running the Pipeline
 Use the provided automation script to start the services:
-`chmod +x start_pipeline.sh`
-`./start_pipeline.sh`
+```bash
+chmod +x start_pipeline.sh
+./start_pipeline.sh
+```
 This starts Redis, the Flask API, and the ML Worker.
 
 🛠️ Tool Integration
