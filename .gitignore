@@ -1,0 +1,21 @@
+# Generated training data
+training_data.csv
+
+# Generated ML model files
+sql_model.pkl
+vectorizer.pkl
+
+# Log files
+*.log
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Virtual environments
+venv/
+ENV/
+env/

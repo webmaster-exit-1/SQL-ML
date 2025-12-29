@@ -20,7 +20,24 @@ SQL-ML is a high-performance detection engine that uses Machine Learning to clas
 2. Installation
 Clone the repository and ensure your trained model file is in the root directory.
 
-3. Running the Pipeline
+3. Generate Training Data and Train Model
+Before running the pipeline, you must generate the training data and train the ML model:
+
+**Step 1: Generate Training Data**
+Run the synthetic data generator to create `training_data.csv`:
+```bash
+python sdg.py
+```
+This script generates a dataset with labeled SQL injection examples and safe queries, which is required for training the machine learning model.
+
+**Step 2: Train the Model**
+Train the ML model using the generated training data:
+```bash
+python newsql.py
+```
+This creates the model files (`sql_model.pkl` and `vectorizer.pkl`) that the worker uses for detection.
+
+4. Running the Pipeline
 Use the provided automation script to start the services:
 `chmod +x start_pipeline.sh`
 `./start_pipeline.sh`
