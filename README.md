@@ -53,11 +53,14 @@ This starts Redis, the Flask API, and the ML Worker.
 Integrating with sqlmap
 
 To analyze every request sqlmap makes in real-time, use the --postprocess flag:
-`python3 sqlmap.py -u "http://example.com/api.php?id=1" --postprocess=sqlmap_ml_bridge.py`
-
+```bash
+python3 sqlmap.py -u "http://example.com/api.php?id=1" --postprocess=sqlmap_ml_bridge.py
+```
 Manual Check
 You can also test a single log entry manually:
-`python3 ml_check.py "SELECT * FROM users WHERE id='1' UNION SELECT 1,2,3--"`
+```bash
+python3 ml_check.py "SELECT * FROM users WHERE id='1' UNION SELECT 1,2,3--"
+```
 
 📊 Monitoring
  * API Logs: `tail -f api.log`
