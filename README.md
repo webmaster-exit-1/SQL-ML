@@ -1,6 +1,6 @@
-[![SQL-ML Integration Test](https://github.com/webmaster-exit-1/SQL-ML/actions/workflows/ci.yml/badge.svg)](https://github.com/webmaster-exit-1/SQL-ML/actions/workflows/ci.yml)
-
 # 🛡️ SQL-ML: Distributed Error Detection for SQLMAP
+
+[![SQL-ML Integration Test](https://github.com/webmaster-exit-1/SQL-ML/actions/workflows/ci.yml/badge.svg)](https://github.com/webmaster-exit-1/SQL-ML/actions/workflows/ci.yml)
 
 SQL-ML is a high-performance detection engine that uses Machine Learning to classify SQL injection vulnerabilities. By utilizing Redis and a Producer-Consumer architecture, it allows sqlmap to perform scans at full speed while offloading complex structural analysis to background workers.
 
@@ -64,19 +64,6 @@ You can also test a single log entry manually:
 python3 ml_check.py "SELECT * FROM users WHERE id='1' UNION SELECT 1,2,3--"
 ```
 
-**DEVELOPMENT & TESTING**
-
-🧪 Closed-Loop Pentest Lab
-The repository includes sql-ml-neuro-pentest-lab.py for a fully automated, local testing environment.
-**Important: Port Configuration**
-By default, the Victim Web App in the lab uses port 5000. To avoid conflicts with the ML Pipeline, manually edit your local copies of these files before running the lab:
- * redisql.py: Change port=5000 to port=6000 at the bottom of the file.
- * sqlmap_ml_bridge.py: Change API_URL to "http://localhost:6000/process".
- * ml_check.py (Optional): Change API_URL to "http://localhost:6000".
-
-Once edited, launch the lab:
-`python3 sql-ml-neuro-pentest-lab.py`
-
 📊 Monitoring
  * API Logs: `tail -f api.log`
  * ML Verdicts: `tail -f worker.log`
@@ -87,4 +74,20 @@ Unlike standard regex-based detection, this tool focuses on:
  * Normalization: Stripping literals to focus on SQL structure.
  * Anomaly Detection: Identifying deviations from "clean" application responses.
  * Async Inference: Ensuring the ML overhead (100ms+) never blocks the scanner.
+
+**DEVELOPMENT & TESTING** <br>
+======
+
+🧪 Closed-Loop Pentest Lab <br>
+
+The repository includes sql-ml-neuro-pentest-lab.py for a fully automated, local testing environment. <br>
+**Important: Port Configuration** <br>
+By default, the Victim Web App in the lab uses port 5000. To avoid conflicts with the ML Pipeline, manually edit your local copies of these files before running the lab:
+ * redisql.py: Change port=5000 to port=6000 at the bottom of the file.
+ * sqlmap_ml_bridge.py: Change API_URL to "http://localhost:6000/process".
+ * ml_check.py (Optional): Change API_URL to "http://localhost:6000".
+
+Once edited, launch the lab:
+`python3 sql-ml-neuro-pentest-lab.py`
+
 
