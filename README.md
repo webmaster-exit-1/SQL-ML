@@ -12,10 +12,10 @@ SQL-ML is a high-performance detection engine that uses Machine Learning to clas
 🚀 Getting Started
 
 1. Prerequisites
- * Redis Server: sudo apt install redis-server
+ * Redis Server: `sudo apt install redis-server`
  * Python 3.8+
  * Dependencies:
-   pip install flask redis requests scikit-learn
+   `pip install flask redis requests scikit-learn`
 
 2. Installation
 Clone the repository:
@@ -50,9 +50,9 @@ chmod +x start_pipeline.sh
 This starts Redis, the Flask API, and the ML Worker.
 
 🛠️ Tool Integration
-Integrating with sqlmap
+Integrating with SQLMAP
 
-To analyze every request sqlmap makes in real-time, use the --postprocess flag:
+To analyze every request sqlmap makes in real-time, use the `--postprocess` flag:
 ```bash
 python3 sqlmap.py -u "http://example.com/api.php?id=1" --postprocess=sqlmap_ml_bridge.py
 ```
