@@ -45,16 +45,12 @@ jobs:
 
       - name: 3. Start Pipeline
         run: |
-          # Use & to run in background and capture PIDs
           nohup python redisql.py > api.log 2>&1 &
-          echo "API_PID=$!" >> $GITHUB_ENV
-          
           nohup python worker.py > worker.log 2>&1 &
-          echo "WORKER_PID=$!" >> $GITHUB_ENV
           
-          # Increased wait time for Flask/Redis handshake
-          echo "Waiting for API to warm up..."
-          sleep 10 
+          # Wait for API to respond 200/404 (not a 500 or connection error)
+          timeout 30s bash -c 'until curl -s localhost:5000 > /dev/null; do sleep 1; done'
+          echo "API is up and running!"
 
       - name: 4. Run Integration Check
         run: |
