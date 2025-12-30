@@ -1,0 +1,78 @@
+name: SQL-ML Integration Test
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    # Setup Redis as a sidecar service
+    services:
+      redis:
+        image: redis
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          # Uses the requirements.txt file created in Step 1
+          pip install -r requirements.txt
+
+      - name: 1. Generate Training Data
+        run: python sdg.py
+
+      - name: 2. Train ML Model
+        run: |
+          python newsql.py
+          # Verify model files exist per .gitignore specifications
+          if [ ! -f sql_model.pkl ] || [ ! -f vectorizer.pkl ]; then
+            echo "Error: Model files not generated!"
+            exit 1
+          fi
+
+      - name: 3. Start Pipeline (Background)
+        run: |
+          # Start Flask API gateway
+          nohup python redisql.py > api.log 2>&1 &
+          # Start ML Worker to process the Redis queue
+          nohup python worker.py > worker.log 2>&1 &
+          # Allow processes to warm up and load model
+          sleep 5
+
+      - name: 4. Run Integration Check
+        run: |
+          # Test using a known malicious payload from sdg.py
+          python ml_check.py "SQLSTATE[42000]: Syntax error or access violation" > results.txt
+          cat results.txt
+          
+          # Check if the verdict is "MALICIOUS" as defined in newsql.py
+          if grep -qi "MALICIOUS" results.txt; then
+            echo "Success: Malicious payload detected by CI."
+          else
+            echo "Failure: Payload not detected correctly."
+            exit 1
+          fi
+
+      - name: 5. Cleanup
+        if: always()
+        run: |
+          pkill -f python || true
