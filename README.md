@@ -1,4 +1,4 @@
-# 🛡️ SQL-ML: Distributed Error Detection for sqlmap
+# 🛡️ SQL-ML: Distributed Error Detection for SQLMAP
 
 SQL-ML is a high-performance detection engine that uses Machine Learning to classify SQL injection vulnerabilities. By utilizing Redis and a Producer-Consumer architecture, it allows sqlmap to perform scans at full speed while offloading complex structural analysis to background workers.
 
