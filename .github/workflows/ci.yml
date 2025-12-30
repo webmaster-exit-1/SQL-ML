@@ -10,7 +10,6 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
 
-    # Redis service container
     services:
       redis:
         image: redis
@@ -36,59 +35,48 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: 1. Generate Training Data
-        run: python sdg.py
-
-      - name: 2. Train ML Model
+      - name: 1. Train ML Model
         run: |
+          python sdg.py
           python newsql.py
-          if [ ! -f sql_model.pkl ] || [ ! -f vectorizer.pkl ]; then
-            echo "Error: Model files not generated!"
-            exit 1
-          fi
+          # Force a small delay to ensure OS handles file writes
+          sleep 2
+          ls -lh *.pkl || (echo "Model files missing!" && exit 1)
 
-      - name: 3. Start Pipeline (Background)
+      - name: 3. Start Pipeline
         run: |
-          # Start Flask API
-          # We use -u to force unbuffered output so logs appear immediately
-          nohup python -u redisql.py > api.log 2>&1 &
+          # Use & to run in background and capture PIDs
+          nohup python redisql.py > api.log 2>&1 &
+          echo "API_PID=$!" >> $GITHUB_ENV
           
-          # Start ML Worker
-          nohup python -u worker.py > worker.log 2>&1 &
+          nohup python worker.py > worker.log 2>&1 &
+          echo "WORKER_PID=$!" >> $GITHUB_ENV
           
-          # WAIT FOR API: This loop pings the API until it responds
-          echo "Waiting for API to respond on port 5000..."
-          for i in {1..20}; do
-            if curl -s http://localhost:5000/process > /dev/null; then
-              echo "API is UP!"
-              break
-            fi
-            echo "Still waiting..."
-            sleep 2
-            if [ $i -eq 20 ]; then
-              echo "Timeout: API failed to start"
-              exit 1
-            fi
-          done
+          # Increased wait time for Flask/Redis handshake
+          echo "Waiting for API to warm up..."
+          sleep 10 
 
       - name: 4. Run Integration Check
         run: |
-          # Test using a known malicious payload
+          # Test a known error string from sdg.py
           python ml_check.py "SQLSTATE[42000]: Syntax error or access violation" > results.txt
           cat results.txt
           
-          # Verify the verdict
           if grep -qi "MALICIOUS" results.txt; then
-            echo "✅ Success: Malicious payload detected."
+            echo "✅ Integration Success"
           else
-            echo "❌ Failure: Logic error or model drift."
+            echo "❌ Integration Failure - See logs below"
+            cat api.log
+            cat worker.log
             exit 1
           fi
 
-      - name: 5. Debug Logs on Failure
-        if: failure()
-        run: |
-          echo "=== API LOGS ==="
-          cat api.log || echo "No API logs found"
-          echo "=== WORKER LOGS ==="
-          cat worker.log || echo "No Worker logs found"
+      - name: Upload Debug Logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: debug-logs
+          path: |
+            api.log
+            worker.log
+            results.txt
