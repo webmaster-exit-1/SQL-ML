@@ -64,6 +64,19 @@ You can also test a single log entry manually:
 python3 ml_check.py "SELECT * FROM users WHERE id='1' UNION SELECT 1,2,3--"
 ```
 
+**DEVELOPMENT & TESTING**
+
+🧪 Closed-Loop Pentest Lab
+The repository includes sql-ml-neuro-pentest-lab.py for a fully automated, local testing environment.
+**Important: Port Configuration**
+By default, the Victim Web App in the lab uses port 5000. To avoid conflicts with the ML Pipeline, manually edit your local copies of these files before running the lab:
+ * redisql.py: Change port=5000 to port=6000 at the bottom of the file.
+ * sqlmap_ml_bridge.py: Change API_URL to "http://localhost:6000/process".
+ * ml_check.py (Optional): Change API_URL to "http://localhost:6000".
+
+Once edited, launch the lab:
+`python3 sql-ml-neuro-pentest-lab.py`
+
 📊 Monitoring
  * API Logs: `tail -f api.log`
  * ML Verdicts: `tail -f worker.log`
