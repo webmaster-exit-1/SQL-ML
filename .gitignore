@@ -1,21 +1,37 @@
-# Generated training data
-training_data.csv
-
-# Generated ML model files
-sql_model.pkl
-vectorizer.pkl
-
-# Log files
+# --- Logs & Runtime ---
+​
 *.log
+api.log
+worker.log
 
-# Python cache
-__pycache__/
+# ​--- ML Artifacts ---
+​
+sql_model.pkl
+training_data.csv
+​
+# --- Hidden Python Files ---
+​
+# ---Compiled bytecode ---
+​
+**/pycache/
 *.py[cod]
-*$py.class
-*.so
-.Python
-
-# Virtual environments
-venv/
-ENV/
-env/
+​
+# --- Local environment/IDE ---
+​
+.env
+.venv/
+.idea/
+.vscode/
+​
+# --- System Garbage ---
+​
+.DS_Store
+.history/
+.cache/
+.pytest_cache/
+​
+# --- IMPORTANT ---
+​
+# Do NOT ignore init.py files as they define the package structure
+​
+!**/init.py
