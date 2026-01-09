@@ -4,9 +4,10 @@
 api.log
 worker.log
 
-# ​--- ML Artifacts ---
-​
+# --- ML Artifacts ---
+
 sql_model.pkl
+vectorizer.pkl
 training_data.csv
 ​
 # --- Hidden Python Files ---
