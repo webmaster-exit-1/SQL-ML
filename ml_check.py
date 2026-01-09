@@ -22,7 +22,8 @@ def run_ml_tool(log_data):
         if res_node.status_code == 200:
             data = res_node.json()['data']
             print("\n[!] ML ANALYSIS COMPLETE")
-            print(f"Verdict: {data}") # This is the output from your SQLMLDetector
+            verdict = "MALICIOUS" if data == 1 else "SAFE"
+            print(f"Verdict: {verdict}")
             break
         elif res_node.status_code == 202:
             sys.stdout.write(".")
